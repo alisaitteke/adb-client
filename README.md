@@ -1,286 +1,225 @@
-# TypeScript ADB Library
+# 🤖 ADB Client - Your Android's New Best Friend
 
-A modern, powerful TypeScript library for Android Debug Bridge (ADB) operations. This library provides a robust interface to interact with Android devices, offering comprehensive device management, app control, and system monitoring capabilities.
+Hey there, awesome developer! 👋 Welcome to yet another ADB library... BUT WAIT! Before you run away, this one's actually cool (and written in TypeScript 😎).
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-4.9.5-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg)
 
-## Features
+## 🚀 What's This All About?
 
-- 🔍 **Automatic ADB Detection**: Works across Windows, macOS, and Linux
-- 🚀 **Modern TypeScript**: Full type safety and modern ES2022 features
-- 🛠 **Comprehensive API**: Complete device and app management
-- 📱 **Device Control**: Screen capture, recording, and input simulation
-- 📊 **System Monitoring**: Battery, network, and performance tracking
-- ⚡ **Promise-based**: Modern async/await interface
-- 🔒 **Type-Safe**: Complete TypeScript definitions
-- 📝 **Extensive Documentation**: Detailed JSDoc comments and examples
+Imagine controlling your Android device with code that's actually readable. No more cryptic ADB commands or shell script nightmares. This library is like having a universal remote for your Android device, but cooler because... well, it's code!
 
-## Installation
+### ✨ The Cool Stuff You Get
+
+- 🔍 **Sherlock-Level ADB Detection**: Finds your ADB binary faster than you can say "where's my SDK?"
+- 🎯 **TypeScript Superpowers**: Because any's are scary and we like our types strict
+- 🛠 **Swiss Army Knife API**: Everything you need, nothing you don't
+- 📱 **Device Whisperer**: Talk to your device like never before
+- ⚡ **Promise-based**: Because callbacks are so 2010
+- 🔒 **Type-Safe**: Let the compiler catch your "oops" moments
+
+## 🎯 Installation
 
 ```bash
-npm install adb-typescript
+npm install adb-client
+# or if you're a yarn person
+yarn add adb-client
+# or if you're one of those cool pnpm folks
+pnpm add adb-client
 ```
 
-## Quick Start
+## 🎮 Quick Start
 
 ```typescript
-import { ADB } from 'adb-typescript';
+import { ADB } from 'adb-client';
 
+// Let's do some magic! ✨
 async function main() {
   try {
-    // Initialize ADB (automatically finds ADB in system)
     const adb = new ADB();
     
-    // Get connected devices
+    // Find all your Android friends
     const devices = await adb.getDevices();
-    console.log('Connected devices:', devices);
     
-    if (devices.length > 0) {
-      const device = devices[0];
-      console.log(`Working with device: ${device.model} (${device.serialNumber})`);
-      
-      // Install an app
-      await adb.installAPK(device.serialNumber, './myapp.apk');
-      
-      // Take a screenshot
-      await adb.takeScreenshot(device.serialNumber, './screen.png');
+    if (devices.length === 0) {
+      console.log('😢 No devices found. Did you forget to plug it in?');
+      return;
     }
+
+    // Pick your favorite device (or the only one you have 😅)
+    const device = devices[0];
+    console.log(`🎯 Found device: ${device.model || 'Mystery Phone'}`);
+    
+    // Let's take a selfie (screenshot)!
+    await adb.takeScreenshot(device.serialNumber, './awesome-screenshot.png');
+    console.log('📸 Say cheese!');
+    
   } catch (error) {
-    console.error('Error:', error.message);
+    console.error('💥 Oops!', error.message);
   }
 }
-
-main();
 ```
 
-## Detailed Examples
+## 🎨 Cool Things You Can Do
 
-### Device Management
+### 📱 Device Management (a.k.a. Phone Whispering)
 
 ```typescript
 const adb = new ADB();
 
-// List all connected devices with details
+// Let's see what devices we've got
 const devices = await adb.getDevices();
-for (const device of devices) {
-  console.log(`
-    Serial: ${device.serialNumber}
-    Model: ${device.model}
-    State: ${device.state}
-  `);
-}
+devices.forEach(device => {
+  console.log(`📱 Found: ${device.model || 'Mystery Device'} (${device.serialNumber})`);
+});
 
-// Get device properties
+// Get all the juicy details
 const props = await adb.getDeviceProperties(devices[0].serialNumber);
 console.log(`
-  Android Version: ${props.androidVersion}
-  SDK Version: ${props.sdkVersion}
-  Brand: ${props.brand}
-  Model: ${props.model}
+  🤖 Android Version: ${props.androidVersion}
+  📦 SDK: ${props.sdkVersion}
+  ⭐ Brand: ${props.brand}
 `);
 ```
 
-### App Management
+### 📦 App Management (Like a Boss)
 
 ```typescript
-// Install application
-await adb.installAPK('device123', './app.apk');
+// Install that awesome app you built
+await adb.installAPK('device123', './my-awesome-app.apk');
 
-// Start application
-await adb.startApp('device123', 'com.example.app', '.MainActivity');
+// Launch it to the moon! 🚀
+await adb.startApp('device123', 'com.your.awesome.app', '.MainActivity');
 
-// Get package information
-const packageInfo = await adb.getPackageInfo('device123', 'com.example.app');
-console.log(`
-  Package: ${packageInfo.packageName}
-  Version: ${packageInfo.versionName}
-  Version Code: ${packageInfo.versionCode}
-`);
+// Check how awesome your app is
+const info = await adb.getPackageInfo('device123', 'com.your.awesome.app');
+console.log(`📊 App Version: ${info.versionName} (${info.versionCode})`);
 
-// Clear app data
-await adb.clearAppData('device123', 'com.example.app');
-
-// Stop application
-await adb.stopApp('device123', 'com.example.app');
-
-// Uninstall application
-await adb.uninstallApp('device123', 'com.example.app');
+// Marie Kondo your app data
+await adb.clearAppData('device123', 'com.your.awesome.app');
 ```
 
-### Screen Capture & Recording
+### 📸 Screen Capture (Say Cheese!)
 
 ```typescript
-// Take screenshot
-await adb.takeScreenshot('device123', './screenshot.png');
+// Take a screenshot (perfect for those "it works on my machine" moments)
+await adb.takeScreenshot('device123', './proof-it-works.png');
 
-// Record screen (10 seconds with options)
-await adb.recordScreen('device123', './video.mp4', 10, {
-  size: '720x1280',
-  bitRate: '4M'
+// Record a video (great for catching those elusive bugs)
+await adb.recordScreen('device123', './bug-in-action.mp4', 10, {
+  size: '720x1280',  // For those who care about quality
+  bitRate: '4M'      // For those who care about file size
 });
 ```
 
-### System Monitoring
+### 🔋 System Monitoring (The Spy Game)
 
 ```typescript
-// Get battery information
+// Check the battery (is it coffee break time?)
 const battery = await adb.getBatteryInfo('device123');
 console.log(`
-  Battery Level: ${battery.level}%
-  Temperature: ${battery.temperature}°C
-  Charging: ${battery.isCharging}
-  Power Source: ${battery.powerSource}
+  🔋 Battery: ${battery.level}%
+  🌡️ Temperature: ${battery.temperature}°C
+  ⚡ Charging: ${battery.isCharging ? 'Yep!' : 'Nope!'}
 `);
 
-// Get network information
+// Network status (for when Wi-Fi is being sneaky)
 const network = await adb.getNetworkInfo('device123');
 console.log(`
-  IP Address: ${network.ipAddress}
-  WiFi Enabled: ${network.wifiEnabled}
-  Signal Level: ${network.wifiSignalLevel}
+  🌐 IP: ${network.ipAddress}
+  📶 Wi-Fi: ${network.wifiEnabled ? 'Connected' : 'Looking for signal...'}
 `);
 ```
 
-### Device Control
+### 🎮 Device Control (Power User Stuff)
 
 ```typescript
-// Send key events
-await adb.sendKeyEvent('device123', 'KEYCODE_HOME');
-await adb.sendKeyEvent('device123', 'KEYCODE_BACK');
+// Press buttons like a pro gamer
+await adb.sendKeyEvent('device123', 'KEYCODE_HOME');  // Go home!
+await adb.sendKeyEvent('device123', 'KEYCODE_BACK');  // Retreat!
 
-// Control WiFi
-await adb.setWifiEnabled('device123', true);  // Enable WiFi
-await adb.setWifiEnabled('device123', false); // Disable WiFi
-
-// Execute shell commands
-const result = await adb.shell('device123', 'ls /sdcard');
-console.log('Files in sdcard:', result);
+// Toggle Wi-Fi (because why not?)
+await adb.setWifiEnabled('device123', true);  // 📶 ON
+await adb.setWifiEnabled('device123', false); // 📴 OFF
 ```
 
-### Debugging & Diagnostics
+## 🎯 Error Handling (Because Stuff Happens)
 
 ```typescript
-// Restart ADB server if needed
-await adb.restartServer();
-
-// Generate bug report
-await adb.takeBugReport('device123', './bugreport.zip');
-```
-
-## Error Handling
-
-The library provides specific error types for better error handling:
-
-```typescript
-import { ADB, ADBError, DeviceNotFoundError, CommandError } from 'adb-typescript';
+import { ADB, ADBError, DeviceNotFoundError, CommandError } from 'adb-client';
 
 try {
   const adb = new ADB();
   await adb.getDevices();
 } catch (error) {
   if (error instanceof DeviceNotFoundError) {
-    console.error('Device not found:', error.message);
+    console.error('😢 Device went on vacation:', error.message);
   } else if (error instanceof CommandError) {
-    console.error('Command failed:', error.message);
-  } else if (error instanceof ADBError) {
-    console.error('ADB error:', error.message);
+    console.error('🤔 ADB is being difficult:', error.message);
   } else {
-    console.error('Unknown error:', error);
+    console.error('💥 Something went boom:', error);
   }
 }
 ```
 
-## Configuration Options
+## ⚙️ Configuration (For the Perfectionists)
 
 ```typescript
 const adb = new ADB({
-  // Custom ADB path (optional)
-  customPath: '/custom/path/to/adb',
-  
-  // Command timeout in milliseconds (default: 30000)
-  timeout: 5000
+  customPath: '/path/to/your/special/adb',  // For the special snowflakes
+  timeout: 5000  // For the impatient developers
 });
 ```
 
-## API Reference
+## 📚 Requirements
 
-### Core Classes
+- Node.js ≥ 18 (Because we're modern like that)
+- ADB installed (You knew this was coming, right?)
+- An Android device (Or emulator, we don't judge)
 
-- `ADB`: Main class for ADB operations
-- `ADBError`: Base error class
-- `DeviceNotFoundError`: Device-specific errors
-- `CommandError`: Command execution errors
+## 🤝 Contributing
 
-### Interfaces
+1. Fork it (Yes, that button up there ☝️)
+2. Create your feature branch: `git checkout -b feature/something-awesome`
+3. Commit your changes: `git commit -m 'Add something awesome'`
+4. Push to the branch: `git push origin feature/something-awesome`
+5. Submit a PR (and make our day!)
 
-- `DeviceInfo`: Connected device information
-- `PackageInfo`: Application package information
-- `ADBOptions`: Configuration options
-
-Full API documentation is available in the source code JSDoc comments.
-
-## Requirements
-
-- Node.js ≥ 18
-- ADB installed and accessible in system PATH
-- Android SDK Platform Tools
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch: `git checkout -b feature/amazing-feature`
-3. Commit your changes: `git commit -m 'Add amazing feature'`
-4. Push to the branch: `git push origin feature/amazing-feature`
-5. Open a Pull Request
-
-## Development
+## 🛠️ Development
 
 ```bash
-# Install dependencies
+# Get the party started
 npm install
 
-# Build
+# Build something amazing
 npm run build
 
-# Run tests
+# Make sure it works
 npm test
 
-# Format code
+# Make it pretty
 npm run format
-
-# Type check
-npm run typecheck
 ```
 
-## License
+## 📝 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+MIT License - Go wild! (Just don't blame us if something breaks 😉)
 
-## Support
+## 💡 Support
 
-For support and questions:
+Found a bug? Got a cool idea? Need a virtual hug?
 - Open an issue
-- Submit a pull request
-- Contact the maintainers
+- Submit a PR
+- Send a carrier pigeon
 
-## Changelog
+## 🎉 Coming Soon™
 
-### 1.0.0
-- Initial release
-- Basic ADB functionality
-- Device management
-- App control
-- Screen capture
-- System monitoring
+- [ ] Telepathic device control
+- [ ] Time travel debugging
+- [ ] Coffee maker integration
+- [ ] More realistic features we're actually working on...
 
-## Roadmap
+---
 
-- [ ] WebSocket-based device monitoring
-- [ ] Real-time logcat streaming
-- [ ] Multiple device parallel operations
-- [ ] Custom plugin system
-- [ ] Web interface for device management
-- [ ] Performance profiling tools
-- [ ] Integration with Android Studio
+Made with ☕ and TypeScript. Happy coding! 🚀
