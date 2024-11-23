@@ -73,10 +73,8 @@ jobs:
               # Update package.json without creating git tag
               npm version $NEW_VERSION --no-git-tag-version --allow-same-version
           
-              # Update package-lock.json if exists
-              if [ -f "package-lock.json" ]; then
-                npm install --package-lock-only
-              fi
+              npm install
+              rm -rf dist/
           
               # Stage changes
               git add package.json
