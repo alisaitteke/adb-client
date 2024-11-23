@@ -1,5 +1,18 @@
 # 1.0.5 (2024-11-23)
 
+## Changes in this Release
+
+- chore(release-drafter): update release drafter configuration to remov… @alisaitteke (#16)
+- Develop @alisaitteke (#15)
+- chore(package-lock.json) @alisaitteke (#13)
+- Develop @alisaitteke (#12)
+- chore(workflow): add workflow\_dispatch event to allow manual triggeri… @alisaitteke (#11)
+
+**Full Changelog**: https://github.com/alisaitteke/adb-client/compare/v1.0.4...1.0.5
+
+
+# 1.0.5 (2024-11-23)
+
 ## What's Changed
 ## What's Changed
 - Develop @alisaitteke (#10)
