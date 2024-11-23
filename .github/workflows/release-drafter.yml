@@ -1,16 +1,61 @@
+# Automatically creates and updates release drafts when PRs are merged
 name: Release Drafter
+
+# Triggers the workflow on push to main and on PR activities
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
     types: [opened, reopened, synchronize]
+    branches: [ main ]
+  # Manual trigger option
+  workflow_dispatch:
+
+# Define required permissions for the workflow
+permissions:
+  # Required permissions for release and milestone management
+  contents: write        # Allows creating releases
+  pull-requests: write   # Allows reading and labeling PRs
+  issues: write         # Allows managing related issues
 
 jobs:
   update_release_draft:
     runs-on: ubuntu-latest
     steps:
-      - uses: release-drafter/release-drafter@v5
+      # Checkout repository with full history
+      - uses: actions/checkout@v4
         with:
-          config-name: release-drafter.yml
+          fetch-depth: 0
+
+      # Run release drafter action
+      - uses: release-drafter/release-drafter@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # Configuration options
+          config-name: release-drafter.yml    # Path to config file
+          disable-autolabeler: false          # Enable automatic PR labeling
+          tag-template: 'v$RESOLVED_VERSION'   # Version tag format
+          version-template: '$MAJOR.$MINOR.$PATCH'  # Version number format
+          publish: false                      # Create as draft only
+          prerelease: false                   # Mark as stable release
+          commitish: main                     # Target branch
+
+  # Optional: Update changelog file in repository
+  update_changelog:
+    needs: update_release_draft
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Update Changelog
+        run: |
+          if [ -f CHANGELOG.md ]; then
+            echo "Updating CHANGELOG.md"
+            # Add changelog update commands here if needed
+          else
+            echo "CHANGELOG.md not found"
+          fi

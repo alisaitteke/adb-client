@@ -1,5 +1,15 @@
+# Template for release name and tag
 name-template: 'v$RESOLVED_VERSION'
 tag-template: 'v$RESOLVED_VERSION'
+
+# Main release notes template
+template: |
+  ## What's Changed
+  $CHANGES
+  
+  **Full Changelog**: https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION
+
+# Categories for grouping changes
 categories:
   - title: '🚀 Features'
     labels:
@@ -14,25 +24,42 @@ categories:
     labels:
       - 'chore'
       - 'dependencies'
+  - title: '📚 Documentation'
+    labels:
+      - 'documentation'
+      - 'docs'
 
-change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
-change-title-escapes: '\<*_&'
-
+# Version increment rules based on PR labels
 version-resolver:
   major:
     labels:
       - 'major'
+      - 'breaking'
   minor:
     labels:
       - 'minor'
+      - 'feature'
+      - 'enhancement'
   patch:
     labels:
       - 'patch'
+      - 'fix'
+      - 'bugfix'
+      - 'bug'
+      - 'chore'
+      - 'dependencies'
+      - 'documentation'
   default: patch
 
-template: |
-  ## Changes
-  
-  $CHANGES
-  
-  **Full Changelog**: https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION
+# Labels to exclude from release notes
+exclude-labels:
+  - 'skip-changelog'
+
+# Template for individual changes
+change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+change-title-escapes: '\<*_&'
+
+# Text replacements in release notes
+replacers:
+  - search: '/CVE-(\d{4})-(\d+)/g'
+    replace: 'CVE-$1-$2'
