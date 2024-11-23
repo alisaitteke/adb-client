@@ -1,15 +1,16 @@
-# Template for release name and tag
 name-template: 'v$RESOLVED_VERSION'
 tag-template: 'v$RESOLVED_VERSION'
-
-# master release notes template
 template: |
   ## What's Changed
   $CHANGES
   
   **Full Changelog**: https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION
+  
+  ## Installation
+  ```bash
+  npm install your-package-name@$RESOLVED_VERSION
+  ```
 
-# Categories for grouping changes
 categories:
   - title: '🚀 Features'
     labels:
@@ -29,7 +30,6 @@ categories:
       - 'documentation'
       - 'docs'
 
-# Version increment rules based on PR labels
 version-resolver:
   major:
     labels:
@@ -51,15 +51,12 @@ version-resolver:
       - 'documentation'
   default: patch
 
-# Labels to exclude from release notes
 exclude-labels:
   - 'skip-changelog'
 
-# Template for individual changes
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 change-title-escapes: '\<*_&'
 
-# Text replacements in release notes
 replacers:
   - search: '/CVE-(\d{4})-(\d+)/g'
     replace: 'CVE-$1-$2'

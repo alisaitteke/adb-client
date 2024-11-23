@@ -1,61 +1,108 @@
-# Automatically creates and updates release drafts when PRs are merged
 name: Release Drafter
 
-# Triggers the workflow on push to master and on PR activities
 on:
   push:
     branches: [ master ]
   pull_request:
     types: [opened, reopened, synchronize]
     branches: [ master ]
-  # Manual trigger option
   workflow_dispatch:
 
-# Define required permissions for the workflow
 permissions:
-  # Required permissions for release and milestone management
-  contents: write        # Allows creating releases
-  pull-requests: write   # Allows reading and labeling PRs
-  issues: write         # Allows managing related issues
+  contents: write
+  pull-requests: write
+  issues: write
 
 jobs:
   update_release_draft:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.release_drafter.outputs.resolved_version }}
     steps:
-      # Checkout repository with full history
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # Run release drafter action
-      - uses: release-drafter/release-drafter@v5
+      - id: release_drafter
+        uses: release-drafter/release-drafter@v5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          # Configuration options
-          config-name: release-drafter.yml    # Path to config file
-          disable-autolabeler: false          # Enable automatic PR labeling
-          tag-template: 'v$RESOLVED_VERSION'   # Version tag format
-          version-template: '$MAJOR.$MINOR.$PATCH'  # Version number format
-          publish: false                      # Create as draft only
-          prerelease: false                   # Mark as stable release
-          commitish: master                     # Target branch
+          config-name: release-drafter.yml
+          disable-autolabeler: false
 
-  # Optional: Update changelog file in repository
-  update_changelog:
+  update_package_version:
     needs: update_release_draft
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Configure Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Update Version
+        run: |
+          NEW_VERSION="${{ needs.update_release_draft.outputs.version }}"
+          if [ -n "$NEW_VERSION" ]; then
+            # Remove 'v' prefix if present
+            NEW_VERSION="${NEW_VERSION#v}"
+          
+            # Update package.json version
+            npm version $NEW_VERSION --no-git-tag-version
+          
+            # Update package-lock.json if exists
+            if [ -f "package-lock.json" ]; then
+              npm install --package-lock-only
+            fi
+          
+            # Stage changes
+            git add package.json
+            if [ -f "package-lock.json" ]; then
+              git add package-lock.json
+            fi
+          
+            # Commit and push changes
+            git commit -m "chore: update package version to $NEW_VERSION [skip ci]"
+            git push
+          else
+            echo "No version update needed"
+          fi
 
       - name: Update Changelog
         run: |
           if [ -f CHANGELOG.md ]; then
-            echo "Updating CHANGELOG.md"
-            # Add changelog update commands here if needed
-          else
-            echo "CHANGELOG.md not found"
+            NEW_VERSION="${{ needs.update_release_draft.outputs.version }}"
+            DATE=$(date +"%Y-%m-%d")
+          
+            # Create new version entry
+            echo "# $NEW_VERSION ($DATE)" > temp_changelog.md
+            echo "" >> temp_changelog.md
+            echo "## What's Changed" >> temp_changelog.md
+          
+            # Add release notes
+            curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                 -H "Accept: application/vnd.github.v3+json" \
+                 "https://api.github.com/repos/${{ github.repository }}/releases/latest" | \
+            jq -r '.body' >> temp_changelog.md
+          
+            echo "" >> temp_changelog.md
+          
+            # Combine with existing changelog
+            cat CHANGELOG.md >> temp_changelog.md
+            mv temp_changelog.md CHANGELOG.md
+          
+            # Commit changelog
+            git add CHANGELOG.md
+            git commit -m "docs: update changelog for $NEW_VERSION [skip ci]"
+            git push
           fi
