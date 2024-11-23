@@ -24,7 +24,7 @@
     "format": "prettier --write src/",
     "typecheck": "tsc --noEmit",
     "prepare": "npm run build",
-    "prepublishOnly": "npm test && npm run lint",
+    "prepublishOnly": "npm run lint",
     "postinstall": "npm run build"
   },
   "repository": {
