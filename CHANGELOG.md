@@ -1,3 +1,14 @@
+# 1.0.5 (2024-11-23)
+
+## What's Changed
+## What's Changed
+- Develop @alisaitteke (#10)
+- Develop @alisaitteke (#9)
+- docs(README): update project description to provide a clearer overvie… @alisaitteke (#8)
+
+**Full Changelog**: https://github.com/alisaitteke/adb-client/compare/1.0.3...v1.0.4
+
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
