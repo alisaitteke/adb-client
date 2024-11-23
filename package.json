@@ -15,15 +15,17 @@
   },
   "scripts": {
     "clean": "rimraf dist",
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "prebuild": "npm run clean",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "test": "vitest",
     "coverage": "vitest run --coverage",
     "lint": "eslint src/**/*.ts",
     "format": "prettier --write src/",
     "typecheck": "tsc --noEmit",
     "prepare": "npm run build",
-    "prepublishOnly": "npm run lint"
+    "prepublishOnly": "npm test && npm run lint",
+    "postinstall": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -63,7 +65,12 @@
     "node": ">=18"
   },
   "files": [
-    "dist/**/*"
+    "dist/**/*",
+    "src/**/*",
+    "package.json",
+    "package-lock.json",
+    "README.md",
+    "LICENSE"
   ],
   "publishConfig": {
     "access": "public"
