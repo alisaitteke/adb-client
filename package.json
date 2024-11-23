@@ -1,6 +1,6 @@
 {
   "name": "@alisaitteke/adb-client",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "Modern TypeScript library for Android Debug Bridge (ADB)",
   "type": "module",
   "main": "./dist/index.js",
