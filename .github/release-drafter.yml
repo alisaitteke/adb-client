@@ -1,34 +1,45 @@
-name-template: '$RESOLVED_VERSION'
-tag-template: '$RESOLVED_VERSION'
+# .github/release-drafter.yml
+name-template: '$RESOLVED_VERSION'  # Removed v prefix
+tag-template: '$RESOLVED_VERSION'   # Removed v prefix
+
 template: |
-  ## What's Changed
+  ## Changes in this Release
+  
   $CHANGES
   
-  **Full Changelog**: https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...v$RESOLVED_VERSION
-  
-  ## Installation
-  ```bash
-  npm install your-package-name@$RESOLVED_VERSION
-  ```
+  **Full Changelog**: https://github.com/$OWNER/$REPOSITORY/compare/$PREVIOUS_TAG...$RESOLVED_VERSION
 
 categories:
   - title: '🚀 Features'
-    labels:
-      - 'feature'
-      - 'enhancement'
+    label: 'feature'
   - title: '🐛 Bug Fixes'
-    labels:
-      - 'fix'
-      - 'bugfix'
-      - 'bug'
+    label: 'fix'
   - title: '🧰 Maintenance'
-    labels:
-      - 'chore'
-      - 'dependencies'
+    label: 'chore'
   - title: '📚 Documentation'
-    labels:
-      - 'documentation'
-      - 'docs'
+    label: 'documentation'
+
+autolabeler:
+  - label: 'feature'
+    branch:
+      - '/feat\/.+/'
+    title:
+      - '/feat:/i'
+  - label: 'fix'
+    branch:
+      - '/fix\/.+/'
+    title:
+      - '/fix:/i'
+  - label: 'chore'
+    branch:
+      - '/chore\/.+/'
+    title:
+      - '/chore:/i'
+  - label: 'documentation'
+    branch:
+      - '/docs?\/.+/'
+    title:
+      - '/docs?:/i'
 
 version-resolver:
   major:
@@ -51,12 +62,10 @@ version-resolver:
       - 'documentation'
   default: patch
 
+commitish: master  # Changed from main to master
 exclude-labels:
   - 'skip-changelog'
 
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 change-title-escapes: '\<*_&'
-
-replacers:
-  - search: '/CVE-(\d{4})-(\d+)/g'
-    replace: 'CVE-$1-$2'
+no-changes-template: '* No changes'

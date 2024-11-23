@@ -1,11 +1,12 @@
+# .github/workflows/release-drafter.yml
 name: Release Drafter
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master ]  # Changed from main to master
   pull_request:
     types: [opened, reopened, synchronize]
-    branches: [ master ]
+    branches: [ master ]  # Changed from main to master
   workflow_dispatch:
 
 permissions:
@@ -14,30 +15,39 @@ permissions:
   issues: write
 
 jobs:
-  update_release_draft:
+  draft:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.release_drafter.outputs.resolved_version }}
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - id: release_drafter
-        uses: release-drafter/release-drafter@v5
+      - uses: release-drafter/release-drafter@v5
+        id: release_drafter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           config-name: release-drafter.yml
           disable-autolabeler: false
+          commitish: master  # Changed from main to master
 
-  update_package_version:
-    needs: update_release_draft
+      - name: Extract version without v prefix
+        id: version
+        run: |
+          VERSION="${{ steps.release_drafter.outputs.resolved_version }}"
+          VERSION="${VERSION#v}"  # Remove v prefix if present
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+  update_version:
+    needs: draft
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'  # Changed from main to master
     steps:
       - uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
@@ -50,55 +60,65 @@ jobs:
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
 
-      - name: Update Version
+      - name: Update Package Version
         run: |
-          NEW_VERSION="${{ needs.update_release_draft.outputs.version }}"
+          NEW_VERSION="${{ needs.draft.outputs.version }}"
           if [ -n "$NEW_VERSION" ]; then
-            # Remove 'v' prefix if present
-            NEW_VERSION="${NEW_VERSION#}"
+            # Read current version
+            CURRENT_VERSION=$(node -p "require('./package.json').version")
           
-            # Update package.json version
-            npm version $NEW_VERSION --no-git-tag-version
+            if [ "$CURRENT_VERSION" != "$NEW_VERSION" ]; then
+              echo "Updating version from $CURRENT_VERSION to $NEW_VERSION"
           
-            # Update package-lock.json if exists
-            if [ -f "package-lock.json" ]; then
-              npm install --package-lock-only
+              # Update package.json without creating git tag
+              npm version $NEW_VERSION --no-git-tag-version --allow-same-version
+          
+              # Update package-lock.json if exists
+              if [ -f "package-lock.json" ]; then
+                npm install --package-lock-only
+              fi
+          
+              # Stage changes
+              git add package.json
+              if [ -f "package-lock.json" ]; then
+                git add package-lock.json
+              fi
+          
+              # Commit and push changes
+              git commit -m "chore: update package version to $NEW_VERSION [skip ci]"
+              git push
+            else
+              echo "Version is already up to date ($CURRENT_VERSION)"
             fi
-          
-            # Stage changes
-            git add package.json
-            if [ -f "package-lock.json" ]; then
-              git add package-lock.json
-            fi
-          
-            # Commit and push changes
-            git commit -m "chore: update package version to $NEW_VERSION [skip ci]"
-            git push
           else
             echo "No version update needed"
           fi
 
       - name: Update Changelog
+        if: needs.draft.outputs.version != ''
         run: |
           if [ -f CHANGELOG.md ]; then
-            NEW_VERSION="${{ needs.update_release_draft.outputs.version }}"
+            NEW_VERSION="${{ needs.draft.outputs.version }}"
             DATE=$(date +"%Y-%m-%d")
           
-            # Create new version entry
+            # Create temporary file for new content
             echo "# $NEW_VERSION ($DATE)" > temp_changelog.md
             echo "" >> temp_changelog.md
-            echo "## What's Changed" >> temp_changelog.md
           
             # Add release notes
-            curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-                 -H "Accept: application/vnd.github.v3+json" \
-                 "https://api.github.com/repos/${{ github.repository }}/releases/latest" | \
-            jq -r '.body' >> temp_changelog.md
+            curl -s \
+              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Accept: application/vnd.github.v3+json" \
+              "https://api.github.com/repos/${{ github.repository }}/releases" \
+              | jq -r '.[0].body' >> temp_changelog.md
           
             echo "" >> temp_changelog.md
           
             # Combine with existing changelog
-            cat CHANGELOG.md >> temp_changelog.md
+            if [ -f CHANGELOG.md ]; then
+              cat CHANGELOG.md >> temp_changelog.md
+            fi
+          
             mv temp_changelog.md CHANGELOG.md
           
             # Commit changelog
