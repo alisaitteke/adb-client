@@ -55,7 +55,7 @@ jobs:
           NEW_VERSION="${{ needs.update_release_draft.outputs.version }}"
           if [ -n "$NEW_VERSION" ]; then
             # Remove 'v' prefix if present
-            NEW_VERSION="${NEW_VERSION#v}"
+            NEW_VERSION="${NEW_VERSION#}"
           
             # Update package.json version
             npm version $NEW_VERSION --no-git-tag-version
