@@ -25,14 +25,29 @@
     "prepare": "npm run build",
     "prepublishOnly": "npm run lint"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alisaitteke/adb-client.git"
+  },
   "keywords": [
     "adb",
     "android",
     "typescript",
-    "debug-bridge"
+    "debug-bridge",
+    "android-debug-bridge",
+    "mobile",
+    "development"
   ],
-  "author": "Your Name",
+  "author": {
+    "name": "Ali Sait Teke",
+    "email": "alisaitteke@gmail.com",
+    "url": "https://github.com/alisaitteke"
+  },
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alisaitteke/adb-client/issues"
+  },
+  "homepage": "https://github.com/alisaitteke/adb-client#readme",
   "devDependencies": {
     "@types/node": "^20.10.5",
     "@typescript-eslint/eslint-plugin": "^6.15.0",
@@ -46,5 +61,11 @@
   },
   "engines": {
     "node": ">=18"
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "publishConfig": {
+    "access": "public"
   }
 }
