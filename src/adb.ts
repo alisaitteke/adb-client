@@ -28,7 +28,7 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
 import type { DeviceInfo, PackageInfo, ADBOptions } from './types.js';
-import { ADBError, DeviceNotFoundError } from './errors.js';
+import { ADBError } from './errors.js';
 import { executeCommand, isWindows, sanitizePath } from './utils.js';
 
 export class ADB {
