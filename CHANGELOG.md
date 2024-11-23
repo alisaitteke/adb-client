@@ -1,3 +1,12 @@
+# 1.0.8 (2024-11-23)
+
+## Changes in this Release
+
+- chore(package.json): remove npm test from prepublishOnly script to st… @alisaitteke (#24)
+
+**Full Changelog**: https://github.com/alisaitteke/adb-client/compare/1.0.7...1.0.8
+
+
 # 1.0.7 (2024-11-23)
 
 ## Changes in this Release
