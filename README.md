@@ -63,7 +63,7 @@ async function main() {
 
 ## 🎨 Cool Things You Can Do
 
-### 📱 Device Management (a.k.a. Phone Whispering)
+### 📱 Device Management
 
 ```typescript
 const adb = new ADB();
@@ -83,7 +83,7 @@ console.log(`
 `);
 ```
 
-### 📦 App Management (Like a Boss)
+### 📦 App Management
 
 ```typescript
 // Install that awesome app you built
@@ -100,7 +100,7 @@ console.log(`📊 App Version: ${info.versionName} (${info.versionCode})`);
 await adb.clearAppData('device123', 'com.your.awesome.app');
 ```
 
-### 📸 Screen Capture (Say Cheese!)
+### 📸 Screen Capture
 
 ```typescript
 // Take a screenshot (perfect for those "it works on my machine" moments)
@@ -113,7 +113,7 @@ await adb.recordScreen('device123', './bug-in-action.mp4', 10, {
 });
 ```
 
-### 🔋 System Monitoring (The Spy Game)
+### 🔋 System Monitoring
 
 ```typescript
 // Check the battery (is it coffee break time?)
@@ -132,7 +132,7 @@ console.log(`
 `);
 ```
 
-### 🎮 Device Control (Power User Stuff)
+### 🎮 Device Control
 
 ```typescript
 // Press buttons like a pro gamer
@@ -144,7 +144,7 @@ await adb.setWifiEnabled('device123', true);  // 📶 ON
 await adb.setWifiEnabled('device123', false); // 📴 OFF
 ```
 
-## 🎯 Error Handling (Because Stuff Happens)
+## 🎯 Error Handling
 
 ```typescript
 import { ADB, ADBError, DeviceNotFoundError, CommandError } from 'adb-client';
@@ -163,7 +163,7 @@ try {
 }
 ```
 
-## ⚙️ Configuration (For the Perfectionists)
+## ⚙️ Configuration
 
 ```typescript
 const adb = new ADB({
