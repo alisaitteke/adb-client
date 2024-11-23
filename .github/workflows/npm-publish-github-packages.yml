@@ -1,9 +1,24 @@
-name: Node.js Package
+name: NPM Package Publication
 on:
   release:
     types: [created]
+
 jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run build
+
   publish-gpr:
+    needs: checks
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -15,13 +30,32 @@ jobs:
         with:
           node-version: 20
           registry-url: https://npm.pkg.github.com
-      - run: npm install
-      - run: npm run build
-      - run: npm publish
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build package
+        run: npm run build
+
+      - name: Config Git user
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
+      - name: Publish to GitHub Packages
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Handle publish error
+        if: failure()
+        run: |
+          echo "::error::Failed to publish to GitHub Packages"
+          exit 1
+
   publish-npm:
-    needs: publish-gpr
+    needs: [checks, publish-gpr]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -33,8 +67,48 @@ jobs:
         with:
           node-version: 20
           registry-url: https://registry.npmjs.org
-      - run: npm install
-      - run: npm run build
-      - run: npm publish --provenance --access public
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build package
+        run: npm run build
+
+      - name: Verify package contents
+        run: |
+          npm pack
+          tar -tzf *.tgz
+
+      - name: Publish to NPM
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > .npmrc
+          npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Handle publish error
+        if: failure()
+        run: |
+          echo "::error::Failed to publish to NPM"
+          exit 1
+
+      - name: Cleanup
+        if: always()
+        run: rm -f .npmrc
+
+  notify:
+    needs: [publish-npm]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Notify success
+        if: success()
+        run: |
+          echo "Package published successfully to NPM and GitHub Packages!"
+
+      - name: Notify failure
+        if: failure()
+        run: |
+          echo "Failed to publish package!"
+          exit 1
