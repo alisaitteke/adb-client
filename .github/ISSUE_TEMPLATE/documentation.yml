@@ -1,0 +1,40 @@
+name: Documentation Update
+description: Suggest improvements or report issues in documentation
+title: "[Docs]: "
+labels: ["documentation"]
+body:
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type of Documentation Issue
+      options:
+        - Missing Documentation
+        - Unclear Documentation
+        - Incorrect Documentation
+        - Outdated Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: location
+    attributes:
+      label: Documentation Location
+      description: Which part of the documentation needs updating?
+      placeholder: "README.md, API docs, etc."
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: Current State
+      description: What does the current documentation say?
+
+  - type: textarea
+    id: suggested
+    attributes:
+      label: Suggested Changes
+      description: What should the documentation say instead?
+    validations:
+      required: true

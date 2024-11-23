@@ -1,0 +1,34 @@
+name: Performance Issue
+description: Report a performance problem
+title: "[Performance]: "
+labels: ["performance"]
+body:
+  - type: textarea
+    id: scenario
+    attributes:
+      label: Performance Scenario
+      description: Describe the scenario where you're experiencing performance issues
+    validations:
+      required: true
+
+  - type: textarea
+    id: metrics
+    attributes:
+      label: Performance Metrics
+      description: Share any metrics, benchmarks, or profiling data
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Node.js version, etc.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal Reproduction
+      description: Provide code that demonstrates the performance issue
+    validations:
+      required: true
