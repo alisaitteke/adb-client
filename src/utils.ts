@@ -1,3 +1,10 @@
+/*
+ *
+ *  * Copyright (c) 2024 Ali Sait Teke
+ *  * "Code bridges the gap between human thought and machine execution."
+ *
+ */
+
 import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
 import { platform } from 'node:os';

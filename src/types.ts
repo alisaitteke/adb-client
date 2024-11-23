@@ -1,3 +1,10 @@
+/*
+ *
+ *  * Copyright (c) 2024 Ali Sait Teke
+ *  * "Code bridges the gap between human thought and machine execution."
+ *
+ */
+
 export type DeviceState = 'device' | 'offline' | 'unauthorized' | 'connecting';
 
 export interface DeviceInfo {
