@@ -1,0 +1,55 @@
+name: Security Issue
+description: Report a security vulnerability
+title: "[Security]: "
+labels: ["security"]
+assignees:
+  - security-team
+body:
+  - type: markdown
+    attributes:
+      value: |
+        🚨 IMPORTANT: For critical security issues, please report via our security policy instead.
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - Critical
+        - High
+        - Medium
+        - Low
+    validations:
+      required: true
+
+  - type: textarea
+    id: vulnerability
+    attributes:
+      label: Vulnerability Description
+      description: Describe the security issue
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this vulnerability?
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Package Version
+      description: Which version contains this vulnerability?
+    validations:
+      required: true
+
+  - type: checkboxes
+    attributes:
+      label: Additional Information
+      options:
+        - label: This issue includes proof of concept
+        - label: This vulnerability is already public
+        - label: I have suggested a mitigation or fix
