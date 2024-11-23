@@ -79,7 +79,7 @@ jobs:
               # Stage changes
               git add package.json
               if [ -f "package-lock.json" ]; then
-                git add package-lock.json
+                rm -rf package-lock.json
               fi
           
               # Commit and push changes
