@@ -1,3 +1,12 @@
+# 1.0.11 (2024-11-23)
+
+## Changes in this Release
+
+- Develop @alisaitteke (#28)
+
+**Full Changelog**: https://github.com/alisaitteke/adb-client/compare/1.0.10...1.0.11
+
+
 # 1.0.10 (2024-11-23)
 
 ## Changes in this Release
