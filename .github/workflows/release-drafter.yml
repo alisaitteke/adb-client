@@ -1,13 +1,13 @@
 # Automatically creates and updates release drafts when PRs are merged
 name: Release Drafter
 
-# Triggers the workflow on push to main and on PR activities
+# Triggers the workflow on push to master and on PR activities
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
     types: [opened, reopened, synchronize]
-    branches: [ main ]
+    branches: [ master ]
   # Manual trigger option
   workflow_dispatch:
 
@@ -39,13 +39,13 @@ jobs:
           version-template: '$MAJOR.$MINOR.$PATCH'  # Version number format
           publish: false                      # Create as draft only
           prerelease: false                   # Mark as stable release
-          commitish: main                     # Target branch
+          commitish: master                     # Target branch
 
   # Optional: Update changelog file in repository
   update_changelog:
     needs: update_release_draft
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
       - uses: actions/checkout@v4
         with:
