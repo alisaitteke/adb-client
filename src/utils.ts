@@ -1,6 +1,7 @@
 import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
 import { platform } from 'node:os';
+import {CommandError} from "./errors";
 
 export const execAsync = promisify(exec);
 
