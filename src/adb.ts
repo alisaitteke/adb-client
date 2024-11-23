@@ -1,3 +1,10 @@
+/*
+ *
+ *  * Copyright (c) 2024 Ali Sait Teke
+ *  * "Code bridges the gap between human thought and machine execution."
+ *
+ */
+
 /**
  * ADB (Android Debug Bridge) implementation in TypeScript
  *
