@@ -1,3 +1,12 @@
+# 1.0.7 (2024-11-23)
+
+## Changes in this Release
+
+- Develop @alisaitteke (#23)
+
+**Full Changelog**: https://github.com/alisaitteke/adb-client/compare/1.0.6...1.0.7
+
+
 # 1.0.6 (2024-11-23)
 
 ## Changes in this Release
