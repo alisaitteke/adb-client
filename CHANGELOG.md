@@ -1,3 +1,15 @@
+# 1.0.6 (2024-11-23)
+
+## Changes in this Release
+
+- remove lock files @alisaitteke (#22)
+- chore(release-drafter): remove package-lock.json instead of adding it… @alisaitteke (#21)
+- chore(release-drafter): simplify npm install process by removing pack… @alisaitteke (#20)
+- chore(ci): update GitHub Actions workflow to use npm install instead … @alisaitteke (#19)
+
+**Full Changelog**: https://github.com/alisaitteke/adb-client/compare/1.0.5...1.0.6
+
+
 # 1.0.5 (2024-11-23)
 
 ## Changes in this Release
