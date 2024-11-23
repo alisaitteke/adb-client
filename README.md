@@ -215,7 +215,7 @@ Found a bug? Got a cool idea? Need a virtual hug?
 
 ## 🎉 Coming Soon™
 
-- [x] Telepathic device control
+- [ ] Telepathic device control
 - [ ] Time travel debugging
 - [ ] Coffee maker integration
 - [ ] More realistic features we're actually working on...
