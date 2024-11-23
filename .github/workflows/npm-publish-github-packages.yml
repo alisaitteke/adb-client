@@ -15,7 +15,6 @@ jobs:
           node-version: 20
           cache: 'npm'
 
-      # Önce normal install yapılır
       - name: Install dependencies
         run: npm install
 
