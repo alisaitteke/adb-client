@@ -28,3 +28,15 @@
 - name: dependencies
   color: 0366d6
   description: Pull requests that update a dependency file
+- name: 'breaking'
+  color: 'FF0000'
+  description: 'Breaking changes (major version bump)'
+- name: 'feature'
+  color: '00FF00'
+  description: 'New features (minor version bump)'
+- name: 'fix'
+  color: 'FFA500'
+  description: 'Bug fixes (patch version bump)'
+- name: 'dependencies'
+  color: '0366D6'
+  description: 'Dependencies updates'

@@ -1,0 +1,10 @@
+# .npmignore
+src/__tests__/
+.github/
+.vscode/
+coverage/
+*.test.ts
+*.spec.ts
+tsconfig.json
+.eslintrc
+.prettierrc
